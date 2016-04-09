@@ -5,14 +5,16 @@
 import sys,json,sqlite3,os
 import Lib.feeler,Lib.getEpubApi,Lib.getnovel,Lib.connection
 import Lib.getnovel as getnov
+import Lib.getPiC as getpic
 ClientVersion=0.1
 AVILIABLE_POOL={}
 CONFIG={}
+picturePool=[]
 def loadFiles():
     global AVILIABLE_POOL,CONFIG
-    configfile=open('./Config/config.json','r').read()
-    aviliablefile=open('./Config/aviliable.json','r').read()
-    CONFIG=json.JSONDecoder().decode(configfile)
+    configfile    =open('./Config/config.json','r').read()
+    aviliablefile =open('./Config/aviliable.json','r').read()
+    CONFIG        =json.JSONDecoder().decode(configfile)
     AVILIABLE_POOL=json.JSONDecoder().decode(aviliablefile) 
 # first of all check if the novel id is aviliable
 
@@ -38,11 +40,14 @@ def getChapter(novelid):
         return index
 # if we have the index of the novel why not find the novel 
 def findnovel(novelid):
+    global picturePool
     novelPool=[]
     a=getChapter(novelid)
     for i,j,k in a:
-        if k != "NULL":
-             novelPool.append(k)
+        if k != "NULL" and j != u"\u63d2\u56fe":            
+            novelPool.append(k)
+        elif j == u"\u63d2\u56fe":
+            picturePool.append(k)
     # b=open('./1012.json','w').write(a)
     return novelPool
 # now getthe novel and store it into txt files
@@ -81,16 +86,29 @@ def getNV(url,novelid):
 def getnovels(URLPOOL,novelid):
     for i in URLPOOL:
         getNV(i,novelid)
+# add pictures into ./Assets/<novelid>/PICID/<PICID2>
+def pictureGet(novelid):
+    global picturePool
+    urlA=makeurlA(novelid)
+    for i in picturePool:
+        url=urlA+i
+        getpic.Tofile(Lib.getEpubApi.getEpub(url).docraw,"./Assets/"+str(novelid)+"/"+str(i[:-4])+"/")
 if __name__=="__main__":
     reload(sys)
     sys.setdefaultencoding('utf8');
     loadFiles()
-    novelid0=sys.argv[-1]
+    # novelid0=sys.argv[-1]
     # getChapter(1012)
-    try:
-        novelid=int(novelid0)
-        getnovels(maketheURLPOOL(novelid),novelid)
-    except Exception:
-        print "SyntaxError"
-        pass
-    
+    novelid0=1224
+    # try:
+    novelid=int(novelid0)
+    getnovels(maketheURLPOOL(novelid),novelid)
+    pictureGet(novelid)
+    # except Exception:
+    #     print "SyntaxError"
+    #     pass
+# it is the time to add the picture support
+    print picturePool
+    # for i in picturePool:
+    #     Lib.getEpubApi.getEpub()
+        
