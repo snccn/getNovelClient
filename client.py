@@ -97,16 +97,16 @@ if __name__=="__main__":
     reload(sys)
     sys.setdefaultencoding('utf8');
     loadFiles()
-    # novelid0=sys.argv[-1]
-    # getChapter(1012)
-    novelid0=1224
-    # try:
-    novelid=int(novelid0)
-    getnovels(maketheURLPOOL(novelid),novelid)
-    pictureGet(novelid)
-    # except Exception:
-    #     print "SyntaxError"
-    #     pass
+    novelid0=sys.argv[-1]
+    getChapter(1012)
+    # novelid0=1224
+    try:
+        novelid=int(novelid0)
+        getnovels(maketheURLPOOL(novelid),novelid)
+        pictureGet(novelid)
+    except Exception:
+        print "SyntaxError"
+        pass
 # it is the time to add the picture support
     print picturePool
     # for i in picturePool:
