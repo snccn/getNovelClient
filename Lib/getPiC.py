@@ -64,12 +64,12 @@ def Tofile(index_target,pathw):
     urlpool=getPic(index_target).picurl
     for i in urlpool:
         try:
-            file=open(path+i[44:],"wb")
+            file=open(path+i.split('/')[-1],"wb")
             file.write(getpicfile(i).data)
         except:
             os.mkdir(path)
         finally:
-            file=open(path+i[44:],"wb")
+            file=open(path+i.split('/')[-1],"wb")
             file.write(getpicfile(i).data)
 def locatePicPath(pathw):
     return pathw
